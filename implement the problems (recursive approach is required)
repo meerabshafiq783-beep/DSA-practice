@@ -1,0 +1,114 @@
+#include <iostream>
+using namespace std;
+
+struct Node
+{
+    int data;
+    Node* child[4];
+};
+
+Node* Root = NULL;
+
+Node* createNode(int value)
+{
+    Node* temp = new Node();
+    temp->data = value;
+
+    for(int i = 0; i < 4; i++)
+        temp->child[i] = NULL;
+
+    return temp;
+}
+
+int Height(Node* curr)
+{
+    if(curr == NULL)
+        return -1;
+
+    int max_h = -1;
+
+    for(int i = 0; i < 4; i++)
+    {
+        int h = Height(curr->child[i]);
+        if(h > max_h)
+            max_h = h;
+    }
+
+    return max_h + 1;
+}
+
+void PrintTree(Node* curr, int level)
+{
+    if(curr == NULL)
+        return;
+
+    cout << "Node : " << curr->data;
+    cout << "\tLevel : " << level;
+    cout << "\tHeight : " << Height(curr) << endl;
+
+    for(int i = 0; i < 4; i++)
+        PrintTree(curr->child[i], level + 1);
+}
+void buildTree(int arr[], int n, Node*& currNode)
+{
+    if(n <= 0)
+        return;
+
+    int midIndex = n / 2;
+    int M = arr[midIndex];
+
+    currNode = createNode(M);
+
+    if(Root == NULL)
+        Root = currNode;
+
+    cout << "\n--- Inserted Node : " << M << " ---" << endl;
+    PrintTree(Root, 0);
+
+    int S1[100], S2[100], S3[100], S4[100];
+    int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+
+    double half = M / 2.0;
+    double threeHalf = (3.0 * M) / 2.0;
+
+    for(int i = 0; i < n; i++)
+    {
+        if(i == midIndex)
+            continue;
+
+        if(arr[i] <= half)
+        {
+            S1[c1++] = arr[i];
+        }
+        else if(arr[i] > half && arr[i] < M)
+        {
+            S2[c2++] = arr[i];
+        }
+        else if(arr[i] > M && arr[i] < threeHalf)
+        {
+            S3[c3++] = arr[i];
+        }
+        else 
+        {
+            S4[c4++] = arr[i];
+        }
+    }
+
+    // Build Subtrees recursively
+    buildTree(S1, c1, currNode->child[0]);
+    buildTree(S2, c2, currNode->child[1]);
+    buildTree(S3, c3, currNode->child[2]);
+    buildTree(S4, c4, currNode->child[3]);
+}
+
+int main()
+{
+    int arr[] = {22, 44, 75, 90, 92, 99, 110, 112, 125, 130, 131};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    buildTree(arr, n, Root);
+
+    cout << "\n\nTree Created Successfully.\n";
+
+    return 0;
+}
