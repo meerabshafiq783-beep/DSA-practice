@@ -1,0 +1,150 @@
+#include <iostream>
+using namespace std;
+
+struct Node
+{
+    float data;
+    Node* left;
+    Node* right;
+};
+
+Node* Root = NULL;
+Node* tree[20];
+int countNode = 0;
+
+Node* createNode(float value)
+{
+    Node* temp = new Node();
+
+    temp->data = value;
+    temp->left = NULL;
+    temp->right = NULL;
+
+    return temp;
+}
+
+Node* insert(Node* curr, float value)
+{
+    Node* temp = createNode(value);
+
+    tree[countNode] = temp;
+
+    if(countNode == 0)
+    {
+        curr = temp;
+    }
+    else
+    {
+        int parent = (countNode - 1) / 2;
+
+        if(tree[parent]->left == NULL)
+            tree[parent]->left = temp;
+        else
+            tree[parent]->right = temp;
+    }
+
+    countNode++;
+
+    return curr;
+}
+
+void PreOrder(Node* curr)
+{
+    if(curr != NULL)
+    {
+        cout << curr->data << " ";
+
+        PreOrder(curr->left);
+        PreOrder(curr->right);
+    }
+}
+bool Search(Node* curr, float key)
+{
+    if(curr == NULL)
+        return false;
+
+    if(curr->data == key)
+        return true;
+
+    if(Search(curr->left, key))
+        return true;
+
+    if(Search(curr->right, key))
+        return true;
+
+    return false;
+}
+
+void findPredecessorSuccessor(float key)
+{
+    Node* predecessor = NULL;
+    Node* successor = NULL;
+
+    for(int i = 0; i < countNode; i++)
+    {
+        if(tree[i]->data == key)
+        {
+            if(i > 0)
+                predecessor = tree[i - 1];
+
+            if(i < countNode - 1)
+                successor = tree[i + 1];
+
+            break;
+        }
+    }
+
+    if(predecessor != NULL)
+        cout << "Predecessor = " << predecessor->data << endl;
+    else
+        cout << "Predecessor does not exist." << endl;
+
+    if(successor != NULL)
+        cout << "Successor = " << successor->data << endl;
+    else
+        cout << "Successor does not exist." << endl;
+}
+int countNodes(Node* curr)
+{
+    if(curr == NULL)
+        return 0;
+
+    return 1 + countNodes(curr->left) + countNodes(curr->right);
+}
+
+int main()
+{
+    int n;
+    float value, key;
+
+    cout << "Enter Number of Nodes: ";
+    cin >> n;
+
+    for(int i = 0; i < n; i++)
+    {
+        cout << "Enter Value: ";
+        cin >> value;
+
+        Root = insert(Root, value);
+    }
+
+    cout << "\nPreOrder Traversal: ";
+    PreOrder(Root);
+
+    cout << "\n\nEnter Element to Search: ";
+    cin >> key;
+
+    if(Search(Root, key))
+    {
+        cout << "Element Found\n";
+        findPredecessorSuccessor(key);
+    }
+    else
+    {
+        cout << "Element Not Found\n";
+    }
+
+    cout << "Total Number of Nodes = " << countNodes(Root) << endl;
+
+    return 0;
+}
