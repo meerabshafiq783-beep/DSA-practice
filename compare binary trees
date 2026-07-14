@@ -1,0 +1,120 @@
+#include <iostream>
+using namespace std;
+
+struct Node
+{
+    float data;
+    Node* left;
+    Node* right;
+};
+
+Node* Root1 = NULL;
+Node* Root2 = NULL;
+
+Node* tree1[20];
+Node* tree2[20];
+
+int count1 = 0;
+int count2 = 0;
+
+Node* createNode(float value)
+{
+    Node* temp = new Node();
+
+    temp->data = value;
+    temp->left = NULL;
+    temp->right = NULL;
+
+    return temp;
+}
+
+Node* insert(Node* curr, Node* tree[], int &count, float value)
+{
+    Node* temp = createNode(value);
+
+    tree[count] = temp;
+
+    if(count == 0)
+    {
+        curr = temp;
+    }
+    else
+    {
+        int parent = (count - 1) / 2;
+
+        if(tree[parent]->left == NULL)
+            tree[parent]->left = temp;
+        else
+            tree[parent]->right = temp;
+    }
+
+    count++;
+
+    return curr;
+}
+
+void PreOrder(Node* curr)
+{
+    if(curr != NULL)
+    {
+        cout << curr->data << " ";
+
+        PreOrder(curr->left);
+        PreOrder(curr->right);
+    }
+}
+
+bool compareTrees(Node* root1, Node* root2)
+{
+    if(root1 == NULL && root2 == NULL)
+        return true;
+
+    if(root1 == NULL || root2 == NULL)
+        return false;
+
+    if(root1->data != root2->data)
+        return false;
+
+    return compareTrees(root1->left, root2->left) &&
+           compareTrees(root1->right, root2->right);
+}
+int main()
+{
+    int n1, n2;
+    float value;
+
+    cout << "Enter Number of Nodes in First Tree: ";
+    cin >> n1;
+
+    for(int i = 0; i < n1; i++)
+    {
+        cout << "Enter Value: ";
+        cin >> value;
+
+        Root1 = insert(Root1, tree1, count1, value);
+    }
+
+    cout << "\nEnter Number of Nodes in Second Tree: ";
+    cin >> n2;
+
+    for(int i = 0; i < n2; i++)
+    {
+        cout << "Enter Value: ";
+        cin >> value;
+
+        Root2 = insert(Root2, tree2, count2, value);
+    }
+
+    cout << "\nFirst Tree (PreOrder): ";
+    PreOrder(Root1);
+
+    cout << "\nSecond Tree (PreOrder): ";
+    PreOrder(Root2);
+
+    if(compareTrees(Root1, Root2))
+        cout << "\n\nBoth Trees are Identical.";
+    else
+        cout << "\n\nBoth Trees are Not Identical.";
+
+    return 0;
+}
