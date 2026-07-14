@@ -1,0 +1,99 @@
+#include <iostream>
+using namespace std;
+
+struct Node
+{
+    float data;
+    Node* left;
+    Node* right;
+};
+
+Node* Root = NULL;
+Node* arr[20];
+int countNode = 0;
+
+Node* createNode(float value)
+{
+    Node* temp = new Node();
+
+    temp->data = value;
+    temp->left = NULL;
+    temp->right = NULL;
+
+    return temp;
+}
+
+Node* insert(Node* curr, float value)
+{
+    Node* temp = createNode(value);
+
+    arr[countNode] = temp;
+
+    if(countNode == 0)
+    {
+        curr = temp;
+    }
+    else
+    {
+        int parent = (countNode - 1) / 2;
+
+        if(arr[parent]->left == NULL)
+            arr[parent]->left = temp;
+        else
+            arr[parent]->right = temp;
+    }
+
+    countNode++;
+
+    return curr;
+}
+
+void mirror(Node* curr)
+{
+    if(curr == NULL)
+        return;
+
+    Node* temp = curr->left;
+    curr->left = curr->right;
+    curr->right = temp;
+
+    mirror(curr->left);
+    mirror(curr->right);
+}
+
+void preOrder(Node* curr)
+{
+    if(curr != NULL)
+    {
+        cout << curr->data << " ";
+        preOrder(curr->left);
+        preOrder(curr->right);
+    }
+}
+
+int main()
+{
+    int n;
+    float value;
+
+    cout << "Enter Number of Nodes: ";
+    cin >> n;
+
+    for(int i = 0; i < n; i++)
+    {
+        cout << "Enter Value: ";
+        cin >> value;
+
+        Root = insert(Root, value);
+    }
+
+    cout << "\nPreOrder Before Mirror: ";
+    preOrder(Root);
+
+    mirror(Root);
+
+    cout << "\nPreOrder After Mirror: ";
+    preOrder(Root);
+
+    return 0;
+}
